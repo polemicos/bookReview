@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 
 class BookConroller extends Controller
@@ -12,7 +13,7 @@ class BookConroller extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $title = $request->input('title');
         $filter = $request->input('filter', '');
@@ -28,8 +29,10 @@ class BookConroller extends Controller
             default => $books->latest()
         };
 
-        $books = $books->get();
+        //$books = $books->get();
 
+        $cacheKey = 'books:' . $filter . ':' . $title;
+        $books = cache()->remember($cacheKey, 3600, fn() => $books->get());
         return view('books.index', ['books' => $books]);
     }
 
@@ -60,9 +63,16 @@ class BookConroller extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Book $book): View
     {
-        //
+
+        $cacheKey = 'books:' . $book->id;
+
+        $book = cache()->remember($cacheKey, 3600, fn () => $book->load([
+            'reviews' => fn ($query) => $query->latest()
+        ]));
+
+        return view('books.show', ['book' => $book]);
     }
 
     /**
