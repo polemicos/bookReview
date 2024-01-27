@@ -9,15 +9,18 @@
       </button>
       <div class="hidden w-full md:block md:w-auto" id="navbar-default">
         <ul class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white ">
+          @if(Auth::check())
           <li>
+            <a href="{{route('logout')}}" class="btn">Log out</a>
+          </li>
+          @else
+            <li>
             <a href="{{route('login')}}" class="btn">Log in</a>
           </li>
           <li>
             <a href="{{route('register')}}" class="btn">Registration</a>
           </li>
-          <li>
-            <a href="{{route('logout')}}" class="btn">Log out</a>
-          </li>
+          @endif
         </ul>
       </div>
     </div>
