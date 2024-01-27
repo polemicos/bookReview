@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\BookConroller;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect('/books');
-});
+})->name('home');
 
 Route::resource('books', BookConroller::class)
     ->only(['index', 'show']);
@@ -25,3 +26,14 @@ Route::resource('books', BookConroller::class)
 Route::resource('books.reviews', ReviewController::class)
     ->scoped(['review' => 'book'])
     ->only(['create', 'store']);
+
+Route::get('/login', [AuthController::class, 'login'])->name('login');
+
+Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
+
+
+Route::get('/register', [AuthController::class, 'register'])->name('register');
+
+Route::post('/register', [AuthController::class, 'registerPost'])->name('register.post');
+
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
